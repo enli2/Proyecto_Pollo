@@ -1,3 +1,5 @@
+# Main script to launch game 
+# Can register gesture picture and feature in .csv for future train model
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import csv
