@@ -1,3 +1,5 @@
+# Main script to launch game 
+# Can register gesture picture and feature in .csv for future train model
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import csv
@@ -7,16 +9,13 @@ import itertools
 import pynput
 import matplotlib.pyplot as plt
 import subprocess
-
-
-from collections import Counter
-from collections import deque
-from pynput.keyboard import Key , Controller
-
 import cv2 as cv
 import numpy as np
 import mediapipe as mp
 
+from collections import Counter
+from collections import deque
+from pynput.keyboard import Key , Controller
 from utils import CvFpsCalc
 from model import KeyPointClassifier
 
@@ -24,12 +23,12 @@ from model import KeyPointClassifier
 def main():
     use_brect = True
 
-    # Camera preparation ###############################################################
+    # Camera preparation 
     cap = cv.VideoCapture(0)
     cap.set(cv.CAP_PROP_FRAME_WIDTH, 960)
     cap.set(cv.CAP_PROP_FRAME_HEIGHT, 540)
 
-    # Model load #############################################################
+    # Model load 
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
         static_image_mode='store_true',
@@ -44,7 +43,7 @@ def main():
 
 
 
-    # Read labels ###########################################################
+    # Read labels 
     with open('model/keypoint_classifier/keypoint_classifier_label.csv',
               encoding='utf-8-sig') as f:
         keypoint_classifier_labels = csv.reader(f)
@@ -52,19 +51,17 @@ def main():
             row[0] for row in keypoint_classifier_labels
         ]
 
-    # FPS Measurement ########################################################
+    # FPS Measurement
     cvFpsCalc = CvFpsCalc(buffer_len=10)
 
     winname = "Hand gesture detect"
     cv.namedWindow(winname) 
     cv.moveWindow(winname, 0,0)   
-    # Finger gesture history ################################################
-
-    #  ########################################################################
     mode = 0
     output=3
     keyborard=Controller()
     img_counter = 0
+    
     try:
         file = open("LastNumber.txt")
         img_counter=int(file.read())
@@ -86,22 +83,21 @@ def main():
             break
         number, mode = select_mode(key, mode)
 
-        # Camera capture #####################################################
+        # Camera capture 
         ret, image = cap.read()
         if not ret:
             break
         image = cv.flip(image, 1)  # Mirror display
         debug_image = copy.deepcopy(image)
 
-        # Detection implementation #############################################################
+        # Detection implementation 
         image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
         image.flags.writeable = False
         results = hands.process(image)
         image.flags.writeable = True
 
-        
-        #  ####################################################################
+      
         if results.multi_hand_landmarks is not None:
             for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                   results.multi_handedness):
@@ -160,10 +156,8 @@ def main():
             fps, 
             mode, 
             number)
-
-        # Screen reflection #############################################################
-
         cv.imshow(winname, debug_image)
+    # Release resourse
     p.terminate()
     cap.release()
     cv.destroyAllWindows()
