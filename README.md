@@ -1,4 +1,9 @@
 # Proyecto_Pollo
+
+EL dataset usado en el entrenamiento esta en el siguiente enlace:
+
+https://drive.google.com/file/d/11WIK9DhqjICA-zMDMiutzSPb4Hf1Ug8M/view?usp=sharing
+
 Con descompromir el archivo zip es suficiente para empeezar usar el juego.
 
 Se debe ejecutar con el Game_launcher.exe 
